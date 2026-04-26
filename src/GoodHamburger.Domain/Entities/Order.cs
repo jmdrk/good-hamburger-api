@@ -8,7 +8,7 @@ public sealed class Order
     private readonly List<OrderItem> _items = [];
 
     public Guid Id { get; private set; }
-    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+    public IReadOnlyCollection<OrderItem> Items => _items;
 
     public decimal Subtotal { get; private set; }
     public decimal DiscountPercentage { get; private set; }
@@ -79,7 +79,12 @@ public sealed class Order
         var discountCalculator = new OrderDiscountCalculator();
 
         DiscountPercentage = discountCalculator.GetDiscountPercentage(this);
-        DiscountAmount = decimal.Round(Subtotal * DiscountPercentage, 2);
+
+        DiscountAmount = decimal.Round(
+            Subtotal * DiscountPercentage,
+            2,
+            MidpointRounding.AwayFromZero);
+
         Total = Subtotal - DiscountAmount;
     }
 }
